@@ -1,37 +1,43 @@
-class Transportation(object):
-   """Abstract base class"""
+import abc
 
-   def __init__( self, start, end, distance ):
-      if self.__class__ == Transportation:
-         raise NotImplementedError
-      self.start = start
-      self.end = end
-      self.distance = distance
+class Transportation(metaclass = abc.ABCMeta):
+    def __init__(self, s, e, d):
+        self.start_place = s
+        self.end_place = e
+        self.distance = d
+    def getstart(self):
+        return self.start_place
+    def getend(self):
+        return self.end_place
+    def getdistance(self):
+        return self.distance
+    @abc.abstractmethod
+    def find_cost(self):
+        pass
 
-   def find_cost( self ):
-      """Abstract method; derived classes must override"""
-      raise NotImplementedError
+class walk(Transportation):
+    def __init__(self, s, e, d):
+        super().__init__(s, e, d)
+    def find_cost(self):
+        return 0
 
+class taxi(Transportation):
+    def __init__(self, s, e, d):
+        super().__init__(s, e, d)
+    def find_cost(self):
+        return super().getdistance() * 40
 
-class Walk( Transportation ):
+class train(Transportation):
+    def __init__(self, s, e, d, stop):
+        super().__init__(s, e, d)
+        self.stop = stop
+    def find_cost(self):
+        return self.stop * 5
 
-   def __init__( self, start, end, distance ):
-      Transportation.__init__( self, start, end, distance)
+me = [walk("KMITL","KMITL SCB Bank",0.6),
+        taxi("KMITL SCB Bank","Ladkrabang Station",5),
+        train("Ladkrabang Station","Payathai Station",40,6),
+        taxi("Payathai Station","The British Council",3)]
 
-   def find_cost( self ):
-      return 0
-
-
-   
-# main program
-
-travel_cost = 0
-
-#trip = [ Walk("KMITL","KMITL SCB Bank",0.6),
-         #Taxi("KMITL SCB Bank","Ladkrabang Station",5),
-         #Train("Ladkrabang Station","Payathai Station",40,6),
-         #Taxi("Payathai Station","The British Council",3) ]
-
-for travel in trip:
-   travel_cost += travel.find_cost()
-print travel_cost
+for trans in me:
+    print('Start:', trans.getstart(), 'End:', trans.getend(),'Distance:', trans.getdistance(),'Cost:', trans.find_cost())
